@@ -1,0 +1,82 @@
+.bannerParentDiv {
+  padding-top: 4em;
+  background-color: #f9f9f9; /* Soft background */
+}
+
+/* Child container */
+.bannerParentDiv .bannerChildDiv {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Menu bar styles */
+.bannerParentDiv .bannerChildDiv .menuBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* Category menu spans */
+.bannerParentDiv .bannerChildDiv .menuBar .categoryMenu span {
+  margin-right: 16px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.bannerParentDiv .bannerChildDiv .menuBar .categoryMenu span:hover {
+  color: #007bff;
+}
+
+/* Quick options styles */
+.bannerParentDiv .bannerChildDiv .menuBar .otherQuickOptions span {
+  padding: 10px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.bannerParentDiv .bannerChildDiv .menuBar .otherQuickOptions span:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-radius: 5px;
+}
+
+/* Banner image */
+.bannerChildDiv .banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-top: 1em;
+}
+
+.bannerChildDiv .banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 700px) {
+  .bannerParentDiv .bannerChildDiv .menuBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bannerParentDiv .bannerChildDiv .menuBar .otherQuickOptions {
+    display: none;
+  }
+
+  .bannerChildDiv .banner {
+    margin-top: 1em;
+  }
+}

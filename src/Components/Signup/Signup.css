@@ -1,0 +1,66 @@
+.signupParentDiv {
+  width: 340px;
+  padding: 30px 24px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Input Fields */
+.signupParentDiv .input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: transparent;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.signupParentDiv .input:focus {
+  border-bottom-color: #002f34;
+  outline: none;
+}
+
+/* Button Style */
+.signupParentDiv button {
+  width: 100%;
+  height: 48px;
+  background-color: #002f34;
+  color: whitesmoke;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.signupParentDiv button:hover {
+  background-color: white;
+  color: #002f34;
+  border: 2px solid #002f34;
+}
+
+/* Link Style */
+.signupParentDiv a {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #007b83;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.signupParentDiv a:hover {
+  color: #004d4f;
+  text-decoration: underline;
+}
