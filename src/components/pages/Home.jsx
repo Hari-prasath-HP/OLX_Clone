@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../Navbar/Navbar'
 import Login from '../Modal/Login'
-import Sell from '../Modal/sell'
+import Sell from '../Modal/Sell'
 import Card from '../Card/Card'
 import { ItemsContext } from '../Context/Item'
 import { fetchFromFirestore } from '../Firebase/Firebase'

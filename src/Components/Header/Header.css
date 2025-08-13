@@ -2,7 +2,10 @@
   padding: 10px;
   background-color: whitesmoke;
   position: fixed;
-  width: 100vw;
+  top: 0;
+  left: 0;
+  width: 100%; /* or width: 100% */
+  box-sizing: border-box;
   z-index: 999;
 }
 
@@ -92,9 +95,6 @@
   text-overflow: ellipsis;
   font-weight: bolder;
   margin-right: 5px;
-}
-
-.language svg {
 }
 
 .span {
@@ -205,3 +205,12 @@
     display: none;
   }
 }
+
+.home-container {
+  max-width: 1200px;
+  margin: 80px auto 0; /* Centers horizontally */
+  padding: 24px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 80px);
+}
+

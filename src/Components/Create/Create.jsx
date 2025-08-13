@@ -7,96 +7,99 @@ import { useNavigate } from "react-router-dom";
 
 const Create = () => {
   const { user } = useContext(AuthContext);
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [image, setImage] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    price: "",
+    image: null,
+  });
   const [errors, setErrors] = useState({});
-
   const db = getFirestore();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
+    if (!user) navigate("/");
   }, [user, navigate]);
 
-  const validateField = (fieldName, value) => {
-    let error = "";
-    if (fieldName === "name") {
+  // Validation function for a single field
+const validateField = (fieldName, value) => {
+  let error = "";
+  switch (fieldName) {
+    case "name":
       if (!value.trim()) error = "Name is required";
-    }
-    if (fieldName === "category") {
+      break;
+    case "category":
       if (!value.trim()) error = "Category is required";
-    }
-    if (fieldName === "price") {
-      if (!value || Number(value) <= 0) error = "Price must be a positive number";
-    }
-    if (fieldName === "image") {
+      break;
+    case "price":
+      if (!value || Number(value) <= 0)
+        error = "Price must be a positive number";
+      break;
+    case "image":
       if (!value) error = "Image is required";
       else {
         const validTypes = ["image/jpeg", "image/png", "image/gif"];
-        if (!validTypes.includes(value.type)) error = "Only JPG, PNG, or GIF images are allowed";
-        const maxSize = 2 * 1024 * 1024; // 2MB
-        if (value.size > maxSize) error = "Image size must be less than 2MB";
+        if (!validTypes.includes(value.type))
+          error = "Only JPG, PNG, or GIF images are allowed";
+        const maxSize = 2 * 1024 * 1024;
+        if (value.size > maxSize)
+          error = "Image size must be less than 2MB";
       }
-    }
-    setErrors((prev) => ({ ...prev, [fieldName]: error }));
+      break;
+    default:
+      break;
+  }
+
+  setErrors((prev) => ({ ...prev, [fieldName]: error }));
+  return error; // ✅ return error so we can use immediately
+};
+
+
+  // Validate all fields
+  const validateAll = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      const err = validateField(key, formData[key]);
+      if (err) newErrors[key] = err;
+    });
+    return Object.keys(newErrors).length === 0;
   };
 
-  const validate = () => {
-    const newErrors = {};
+  // Handle change for text inputs
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
 
-    if (!name.trim()) newErrors.name = "Name is required";
-    if (!category.trim()) newErrors.category = "Category is required";
-    if (!price || Number(price) <= 0) newErrors.price = "Price must be a positive number";
-
-    if (!image) {
-      newErrors.image = "Image is required";
-    } else {
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
-      if (!validTypes.includes(image.type)) {
-        newErrors.image = "Only JPG, PNG, or GIF images are allowed";
-      }
-      const maxSize = 2 * 1024 * 1024; // 2MB
-      if (image.size > maxSize) {
-        newErrors.image = "Image size must be less than 2MB";
-      }
-    }
-
-    setErrors(newErrors);
-
-    // Return true if no errors
-    return Object.keys(newErrors).length === 0;
+  // Handle image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setFormData((prev) => ({ ...prev, image: file }));
+    validateField("image", file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validate()) return;
+    if (!validateAll()) return;
 
     const data = new FormData();
-    data.append("file", image);
-    data.append("upload_preset", "olx-clone"); // Your Cloudinary preset
-    data.append("folder", "dfucf2gsp"); // optional
+    data.append("file", formData.image);
+    data.append("upload_preset", "olx-clone");
+    data.append("folder", "dfucf2gsp");
 
     try {
       const res = await fetch(
         "https://api.cloudinary.com/v1_1/dfucf2gsp/image/upload",
-        {
-          method: "POST",
-          body: data,
-        }
+        { method: "POST", body: data }
       );
-
       const json = await res.json();
 
       await addDoc(collection(db, "products"), {
         uid: user.uid,
-        name,
-        category,
-        price: Number(price),
+        name: formData.name.trim(),
+        category: formData.category.trim(),
+        price: Number(formData.price),
         imageUrl: json.secure_url,
         authProvider: "local",
         createdAt: new Date().toISOString(),
@@ -114,86 +117,64 @@ const Create = () => {
       <Header />
       <div className="centerDiv">
         <form onSubmit={handleSubmit} noValidate>
+          {/* Name */}
           <label htmlFor="name">Name</label>
-          <br />
           <input
             className="input"
             type="text"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              validateField("name", e.target.value);
-            }}
-            id="name"
             name="name"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            onBlur={(e) => validateField("name", e.target.value)}
           />
           {errors.name && <p className="error">{errors.name}</p>}
-          <br />
 
+          {/* Category */}
           <label htmlFor="category">Category</label>
-          <br />
           <input
             className="input"
             type="text"
-            value={category}
-            onChange={(e) => {
-              setCategory(e.target.value);
-              validateField("category", e.target.value);
-            }}
-            id="category"
             name="category"
+            value={formData.category}
+            onChange={handleChange}
           />
           {errors.category && <p className="error">{errors.category}</p>}
-          <br />
 
+          {/* Price */}
           <label htmlFor="price">Price</label>
-          <br />
           <input
             className="input"
             type="number"
-            value={price}
-            onChange={(e) => {
-              setPrice(e.target.value);
-              validateField("price", e.target.value);
-            }}
-            id="price"
             name="price"
             min="0"
             step="0.01"
+            value={formData.price}
+            onChange={handleChange}
           />
           {errors.price && <p className="error">{errors.price}</p>}
-          <br />
 
+          {/* Image */}
           <label htmlFor="image">Upload Image</label>
-          <br />
           <input
             type="file"
-            id="image"
             name="image"
             accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              setImage(file);
-              validateField("image", file);
-            }}
+            onChange={handleImageChange}
           />
           {errors.image && <p className="error">{errors.image}</p>}
-          <br />
-
-          {image && (
+          {formData.image && (
             <img
               alt="Preview"
-              width="200px"
-              height="200px"
-              src={URL.createObjectURL(image)}
+              width="200"
+              height="200"
+              src={URL.createObjectURL(formData.image)}
             />
           )}
-          <br />
 
+          {/* Submit */}
           <button
             type="submit"
             className="uploadBtn"
-            disabled={!name || !category || !price || !image}
           >
             Upload and Submit
           </button>

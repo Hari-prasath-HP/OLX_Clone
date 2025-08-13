@@ -8,18 +8,50 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState({ email: "", password: "", general: "" });
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErrorMsg(""); // reset error message
-    const auth = getAuth();
 
+    // Reset errors
+    setErrors({ email: "", password: "", general: "" });
+
+    let hasError = false;
+    if (!email.trim()) {
+      setErrors((prev) => ({ ...prev, email: "Email is required." }));
+      hasError = true;
+    }
+    if (!password.trim()) {
+      setErrors((prev) => ({ ...prev, password: "Password is required." }));
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    const auth = getAuth();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email.trim(), password.trim());
       navigate("/");
     } catch (error) {
-      setErrorMsg(error.message);
+      console.error("Login error:", error.code, error.message);
+      let errorMessage = "";
+      switch (error.code) {
+        case "auth/invalid-email":
+          errorMessage = "Invalid email format.";
+          break;
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email.";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Incorrect password.";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many failed attempts. Please try again later.";
+          break;
+        default:
+          errorMessage = "Login failed. Please try again.";
+      }
+      setErrors((prev) => ({ ...prev, general: errorMessage }));
     }
   };
 
@@ -36,8 +68,8 @@ function Login() {
           type="email"
           id="email"
           name="email"
-          required
         />
+        {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
         <br />
         <label htmlFor="password">Password</label>
         <br />
@@ -48,14 +80,12 @@ function Login() {
           type="password"
           id="password"
           name="password"
-          required
         />
+        {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
         <br />
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+        {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
         <br />
-        <button type="submit" disabled={!email || !password}>
-          Login
-        </button>
+        <button type="submit">Login</button>
       </form>
       <p>
         Don't have an account?{" "}

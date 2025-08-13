@@ -30,7 +30,6 @@ const App = () => {
     <div>
       <NavbarContext>
         <Post>
-          <Router>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/signup" element={<Signup />} />
@@ -39,7 +38,6 @@ const App = () => {
               <Route path="/view" element={<View />} />
               <Route path="/details" element={<Details />} /> {/* added from HEAD */}
             </Routes>
-          </Router>
         </Post>
       </NavbarContext>
     </div>
