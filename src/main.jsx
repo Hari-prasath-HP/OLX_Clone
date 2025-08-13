@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./Components/Context/Auth.jsx";
+import { AuthProvider } from "../src/components/Context/Auth.jsx";
 import { ItemsContextProvider } from "./components/Context/Item.jsx";
 import Context from "./store/FireBaseContext"; // assuming this is the correct default export
 
